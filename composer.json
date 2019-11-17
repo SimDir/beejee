@@ -1,0 +1,9 @@
+{
+    "name": "simdir/mvcrb",
+    "require": {
+        "filp/whoops": "^2.5",
+        "monolog/monolog": "^2.0",
+        "gabordemooij/redbean": "^5.4",
+        "fzaninotto/faker": "^1.8"
+    }
+}

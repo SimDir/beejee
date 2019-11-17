@@ -1,0 +1,165 @@
+.jumbotron {
+    padding:1px;
+    margin-bottom: 0px;
+    background-image: url(/img/bg2.jpg);
+    background-position: 50% 0%;
+    /*background-size: cover;*/
+    /*background-position: center;*/
+    
+    /*background-repeat: no-repeat;*/
+    background-attachment: fixed;
+    color: white;
+    text-shadow: black 0.3em 0.3em 0.3em;
+    height: 445px;
+    border-radius: 0;
+}
+.pd0{
+    padding: 2px;
+}
+/*l-----------------------------k*/
+.view {
+    width: 100%;
+    height: 20vh;
+    min-height:100px;
+    margin-bottom: 3px;
+    /*float: left;*/
+    border: 1px solid #fff;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+    box-shadow: 1px 1px 2px #e6e6e6;
+    cursor: default;
+    background: #fff;
+/*    background: #ccc url(/images/gerb2.png) no-repeat center center;
+    background-size: contain,contain;*/
+}
+.view .mask, .view .content {
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0
+}
+.view img {
+    display: block;
+    position: relative
+}
+.view h2 {
+    /*text-transform: uppercase;*/
+    color: #fff;
+    text-align: center;
+    position: relative;
+    font-size: 17px;
+    padding: 10px;
+    background: rgba(255, 0, 0, 0.8);
+    margin: 20px 0 0 0
+}
+.view p {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 12px;
+    position: relative;
+    color: #fff;
+    padding: 10px 20px 20px;
+    text-align: center
+}
+.view a.info {
+    display: inline-block;
+    text-decoration: none;
+    padding: 7px 14px;
+    background: #0f0c92;
+    color: #fff;
+    text-transform: uppercase;
+    box-shadow: 0 0 1px #000
+}
+.view a.info:hover {
+    box-shadow: 0 0 7px #000
+} 
+.view-first img {
+    transition: all 0.2s linear;
+}
+.view-first .mask {
+    opacity: 0;
+    background-color: rgba(7, 129, 255, 0.9);
+    transition: all 0.4s ease-in-out;
+}
+.view-first h2 {
+    transform: translateY(-100px);
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+}
+.view-first p {
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.2s linear;
+}
+.view-first a.info{
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+}
+.view-first:hover img {
+    transform: scale(1.1);
+}
+.view-first:hover .mask {
+    opacity: 1;
+}
+.view-first:hover h2,
+.view-first:hover p,
+.view-first:hover a.info {
+    opacity: 1;
+    transform: translateY(0px);
+}
+.view-first:hover p {
+    transition-delay: 0.1s;
+}
+.view-first:hover a.info {
+    transition-delay: 0.2s;
+}
+
+#footer {
+    padding: 30px;
+    margin-top: 50px;
+
+    font-size: 10px;
+    background: radial-gradient(at top, #FEFFFF, #31708f);
+/*    background-color: #fefefe;
+    background-image: url(/images/rusorn.png);
+    background-size: contain;
+    background-position: center;*/
+}
+/* Анимации появления и исчезновения могут иметь */
+/* различные продолжительности и динамику.       */
+.slide-fade-enter-active {
+    transition: all .9s ease;
+}
+.slide-fade-leave-active {
+    opacity: 0;
+    /*transition: all .1s cubic-bezier(1.0, 0.2, 0.2, 1.0);*/
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active до версии 2.1.8 */ {
+    transform: translateY(-400px);
+    opacity: 0;
+}
+.bounce-enter-active {
+    animation: bounce-in .6s;
+}
+.bounce-leave-active {
+    /*animation: bounce-in .1s reverse;*/
+    opacity: 0;
+}
+@keyframes bounce-in {
+    0% {
+       
+        transform: scale(0);
+    }
+    50% {
+        
+        transform: scale(1.2);
+    }
+    100% {
+       
+        transform: scale(1);
+    }
+}

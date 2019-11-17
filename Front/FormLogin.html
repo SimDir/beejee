@@ -1,0 +1,83 @@
+<div id="User" class="modal-dialog" role="document">
+        <transition name="bounce" appear>
+            <form class="modal-content card-body" id="formlogin"  role="form">
+        
+
+            <!--Header-->
+            <div class="form-header">
+                <h3><i class="fa fa-lock"></i> Вход пользователя:</h3>
+            </div>
+            <div v-if="errors" class="alert alert-danger" role="alert">
+                {{errors}}
+            </div>
+                    
+                
+            <!--Body-->
+            <div class="md-form">
+                <i class="fa fa-envelope prefix grey-text"></i>
+                <input v-model="CurrentUser.email" value="<{email}>" name="email" type="text" id="defaultForm-email" class="form-control" >
+                <label for="defaultForm-email" class="">Адрес электронной почты или логин</label>
+            </div>
+
+            <div class="md-form">
+                <i class="fa fa-lock prefix grey-text"></i>
+                <input v-model="CurrentUser.password" name="password" id="defaultForm-pass" type="password" class="form-control" required>
+                <label for="defaultForm-pass" class="">Ваш пароль</label>
+            </div>
+
+            <div class="text-center">
+                <button @click.prevent="UserLogin" type="submit" class="btn btn-default waves-effect waves-light">Войти</button>
+            </div>
+        
+        </form>
+    </transition>
+        
+        
+    
+
+</div>
+
+<script type="text/javascript">
+var User = new Vue({
+  el: '#User',
+  mvcrbstore,
+  data: {errors:'',CurrentUser: {email:"",password:""}},
+  methods: {
+    UserLogin() {
+
+        var SendUser = {email:this.CurrentUser.email,password:this.CurrentUser.password};
+
+        fetch( '/user/login/?AJAX=1',{
+            mode: 'cors',
+            method: 'POST',
+            body: JSON.stringify(SendUser)
+            })
+            .then((response) => {
+                
+                if(response.redirected){
+                    window.location.href=response.url;
+                    return false;
+                }
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then((json) => {
+                if(json){
+                    window.location.href='/user';
+                }else{
+                    this.errors = 'Неверное имя пользователя или пароль';
+                }
+   
+                console.log(json);
+                
+            })
+            .catch((error) => {
+                console.log('FormLogin',error);
+            });
+
+        } 
+    }
+});
+</script>

@@ -1,0 +1,100 @@
+<div id="tasklist">
+    <div class="d-flex justify-content-around">
+        <div class="p-2">
+            <select class="browser-default custom-select" v-model.number="perPage" @change.prevent="setPage(1)">
+
+                <option value="1">1</option>
+                <option value="3">3</option>
+                <option value="10">10</option>
+
+            </select>
+        </div>
+        <div class="p-2">
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-info" @click.prevent="setPage(currentPage-1)"><i class="fas fa-angle-left"></i></button>
+                <div v-for="p in paginator.pages" class="btn-group mr-2" role="group">
+                    <button type="button" class="btn btn-primary" v-if="currentPage == p" @click.prevent="setPage(p)">{{ p }}</button>
+                    <button type="button" class="btn btn-default" v-else @click.prevent="setPage(p)">{{ p }}</button>
+                </div>
+                <button type="button" class="btn btn-info" @click.prevent="setPage(currentPage+1)"><i class="fas fa-angle-right"></i></button>
+            </div>
+           
+        </div>
+        <div class="p-2">
+            
+            Flex item 3
+        
+        </div>
+    </div>
+   
+
+    <div class="card mt-5" v-for="item in TaskData">
+        <div class="card-header">
+            <h4 class="card-title">{{item.name}}</h4>
+            <p class="card-text">{{item.email}}</p>
+        </div>
+
+        <div class="card-body">
+
+            <p class="card-text">{{item.text}}</p>
+
+
+        </div>
+        <div class="card-footer text-muted">
+            <!-- Link -->
+            <a href="#!" class="black-text d-flex justify-content-end"><h5>Read more <i class="fas fa-angle-double-right"></i></h5></a>
+        </div>
+    </div>
+</div>
+
+<script>
+var tasklist = new Vue({
+    el: '#tasklist',
+    mvcrbstore,
+    data: {
+      TaskData:{},TaskCount:0,
+      User:{role:0},
+      ErrData:{},
+      perPage:3,currentPage:1,searchStr:''
+    },
+    created() {
+        this.setPage(1);
+    },
+    computed: {
+        paginator() {
+            let p = _.range(1,Math.ceil(this.TaskCount/this.perPage)+1);
+            let st = this.currentPage-2;
+            if(st<1)st=0;
+            return {
+                count:p.length,
+                currentPage: this.currentPage,
+                pages: p.slice(st, st+3)
+            };
+        }
+    },
+    methods: {
+        setPage(p) {
+            if(p>this.paginator.count)p=this.paginator.count;
+            if(p<1)p=1;
+            
+            this.currentPage=p;
+            fetch('/task/get/?AJAX=1', {
+                mode: 'cors',
+                method: 'POST',
+                body: JSON.stringify({start:(p - 1)*this.perPage,limit:this.perPage})
+            })
+            .then(res => res.json())
+            .then(res => {
+                this.TaskData = res.data;
+//                  if(this.search.length>0){
+//                      this.TaskCount = res.Scount;
+//                  }else{
+//                      this.TaskCount=res.count;
+//                  }
+                this.TaskCount=res.count;
+
+            });
+        }
+    }
+});
+</script>

@@ -1,0 +1,94 @@
+<form id="task" class="text-center border border-light mt-5 p-2" action="/task/add" method="POST">
+
+    <p class="h4 mb-4">добавить новую задачу</p>
+    <p v-if="User.role>900" class="h5 mb-4 text-danger">Вы вошли как Администратор</p>
+    
+    <div v-if="ErrData" v-for="item in ErrData" class="alert alert-danger" role="alert">
+            {{ item }}
+    </div>
+    <div class="input-group mb-5">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Имя задачи</span>
+        </div>
+    <input v-model="TaskData.TaskName" type="text" id="defaultContactFormName" class="form-control" placeholder="Введите имя задач в это поле">
+    <div class="input-group-prepend">
+        <span class="input-group-text">E-mail</span>
+    </div>
+    <input v-model="TaskData.TaskEmail" type="text" id="defaultContactFormEmail" class="form-control" placeholder="Введите E-mail в это поле">
+    </div>
+    <div class="form-group">
+        <textarea v-model="TaskData.TaskText" class="form-control rounded-0" id="exampleFormControlTextarea2" rows="9" placeholder="Текст задачи"></textarea>
+    </div>
+
+    <div v-if="User.role>900" class="custom-control custom-checkbox mb-4">
+        <input v-model="TaskData.TaskStatus" type="checkbox" class="custom-control-input" id="defaultContactFormCopy">
+        <label class="custom-control-label" for="defaultContactFormCopy">Установить метку о выполнени (Доступно только администратору)</label>
+    </div>
+
+    <button @click.prevent="AddTask" class="btn btn-info btn-block" type="submit" style="width: 200px;">Добавить</button>
+
+</form>
+<script>
+var task = new Vue({
+    el: '#task',
+    mvcrbstore,
+    data: {
+      TaskData:{TaskName:'',TaskEmail:'',TaskText:'',TaskStatus:false},User:{role:0},
+      ErrData:{}
+    },
+    created() {
+        fetch( '/user/get/?AJAX=1',{
+            mode: 'cors',
+            method: 'POST'
+            }).then((response) => {
+                
+                if(response.redirected){
+                    window.location.href=response.url;
+                    return false;
+                }
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            }).then((json) => {
+                this.User=json;
+                if(this.User.email){
+                    this.TaskData.TaskEmail=this.User.email;
+                }
+            }).catch((error) => {
+                console.log(error);
+            });
+    },
+    methods: {
+        AddTask(){
+            fetch( '/task/add/?AJAX=1',{
+            mode: 'cors',
+            method: 'POST',
+            body: JSON.stringify(this.TaskData)
+            })
+            .then((response) => {
+                
+                if(response.redirected){
+                    window.location.href=response.url;
+                    return false;
+                }
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then((json) => {
+                if(json.ErrData){
+                    this.ErrData=json.ErrData;
+                    
+                }else{
+                    this.ErrData=false;
+                }
+            })
+            .catch((error) => {
+                console.log('Task Send',error);
+            });
+        }
+    }
+});
+</script>
