@@ -20,6 +20,11 @@ class UserController extends Controller{
         if($UserVars['role']==0){
             return mvcrb::Redirect('/user/login');
         }
+        $redir = Session::get('UrerRedirect');
+        if($redir){
+            Session::set('UrerRedirect', null);
+            return mvcrb::Redirect($redir);
+        }
 
         $this->View->VarSetArray($UserVars);
        

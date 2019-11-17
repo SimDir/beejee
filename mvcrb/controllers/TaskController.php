@@ -7,7 +7,7 @@ namespace mvcrb;
  *
  * @author я
  */
-use Faker;
+//use Faker;
 class TaskController extends Controller{
 //    public function IndexAction() {
 //        for($i = 1; $i <= 250; $i++){
@@ -67,4 +67,71 @@ class TaskController extends Controller{
         $Model = new TaskModel();
         return $Model->GetList(json_decode($this->REQUEST));
     }
+    public function ShowAction($id=0) {
+        $this->View->title = 'Задачник - изменить задачу';
+        $SaveTaskId = Session::get('SaveTaskId');
+        if($SaveTaskId){
+            $this->REQUEST=Session::get('SaveTaskData');
+            //var_dump($this->REQUEST);die();
+            Session::set('SaveTaskData', null);
+            Session::set('SaveTaskId', null);
+            Session::set('UrerRedirect', null);
+            return $this->SaveTask($SaveTaskId);
+        }
+        if ($this->POST) return $this->SaveTask($id);
+        $Model = new TaskModel();
+        $task = $Model->Get($id);
+        $this->View->VarSetArray($task);
+        $this->View->content = $this->View->execute('tasks.html');
+        return $this->View->execute('index.html');
+    }
+    /**
+     * тут скопипастил с пред идущего
+     * CreateTask()
+     * ну да йа ленвый :-)
+     */
+    private function SaveTask($id=0) {
+        $User = new UserModel();
+        $PostData = json_decode($this->REQUEST);
+        if($User->GetCurrentUser()['role']<800){
+            Session::set('SaveTaskData', $this->REQUEST);
+            Session::set('SaveTaskId', $id);
+            Session::set('UrerRedirect', '/task/show/'.$id);
+            mvcrb::Redirect('/user/login');
+            return 0;
+        }
+        
+        $Data = [];
+        if (isset($PostData->TaskText) && $PostData->TaskText !== '') {
+//            $Data['text'] = strip_tags($PostData->TaskText, '<p><a><small>');
+            $Data['text'] = preg_replace(["'<script[^>]*?>.*?</script>'si"], '', $PostData->TaskText); // этот варант поинтереснее чем тот что выше закоментировал. хотя надо потестить. продукт еще сырой возможно улучшу чем то
+        } else {
+            $Error[] = 'Введите текст задачи';
+        }
+        if (isset($PostData->TaskEmail) && $PostData->TaskEmail !== '') {
+            $email = strip_tags($PostData->TaskEmail);
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $Data['email'] = $email;
+            } else {
+                $Error[] = "E-mail адрес '$email' указан не верно.\n";
+            }
+        } else {
+            $Error[] = 'Введите Email';
+        }
+        if (isset($PostData->TaskName) && $PostData->TaskName !== '') {
+            $Data['name'] = strip_tags($PostData->TaskName);
+        } else {
+            $Error[] = 'Имя задачи не заполнено';
+        }
+        if (isset($PostData->TaskStatus)) {
+            $Data['status'] = boolval($PostData->TaskStatus);
+        }
+        if (isset($Error)) {
+            $RetDada['ErrData'] = $Error;
+            return $RetDada;
+        }
+        $Model = new TaskModel();
+        return $Model->Edit($Data,(int)$id);
+    }
+
 }

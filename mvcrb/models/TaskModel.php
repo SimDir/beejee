@@ -47,14 +47,17 @@ class TaskModel extends Model{
 
         return $this->store($task);
     }
-
-    public function Edit($Data=null) {
+    public function Get($id=0) {
+        return $this->load($this->TableName, $id)->export();
+    }
+    public function Edit($Data=null,$id=0) {
         if(is_null($Data)) return false;
 //        $user = $this->dispense($this->TableName);
-        $user = $this->findOne($this->TableName, 'id = ?', array($id));
+        $task = $this->findOne($this->TableName, 'id = ?', array($id));
+        $task->import($Data);
+        $task->editdatetime = date('Y-m-d H:i:s');
 
-
-        return $this->store($user);
+        return $this->store($task);
     }
 
 }
