@@ -16,18 +16,18 @@ class TaskModel extends Model{
         $start = $PostData->start ? $PostData->start :0; 
         $limit = $PostData->limit ? $PostData->limit :10; 
         $List['count'] = $this->count($this->TableName);
-        $order=null;
+        if(isset($PostData->data) && $PostData->data !== ''){
+            $order['data'] = $PostData->data;
+            $order['dir'] = $PostData->dir;
+        }else{
+            $order = null;
+        }
+        
+        
         if (is_array($order)) {
-            if ($order['search'] == '') {
-                $List['data'] = $this->findAll($this->TableName, 'ORDER BY ' . $order['data'] . ' ' . $order['dir'] . ' LIMIT ' . $start . ', ' . $limit);
-            } else {
-                $Farr = array(
-                    ':find' => '%' . $order['search'] . '%',
-                    ':start' => $start,
-                    ':limit' => $limit
-                );
-                $List['data'] = $this->find($this->TableName, ' name LIKE :find OR middlename LIKE :find OR surname LIKE :find OR login LIKE :find OR email LIKE :find LIMIT :start, :limit ', $Farr);
-            }
+            
+            $List['data'] = $this->findAll($this->TableName, 'ORDER BY ' . $order['data'] . ' ' . $order['dir'] . ' LIMIT ' . $start . ', ' . $limit);
+            
         } else {
             $List['data'] = $this->findAll($this->TableName, 'LIMIT ' . $start . ', ' . $limit);
             

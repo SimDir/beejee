@@ -1,13 +1,22 @@
 <div id="tasklist">
     <div class="d-flex justify-content-around">
         <div class="p-2">
-            <select class="browser-default custom-select" v-model.number="perPage" @change.prevent="setPage(1)">
-
-                <option value="1">1</option>
-                <option value="3">3</option>
-                <option value="10">10</option>
-
-            </select>
+            <div class="input-group pt-2">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">показать на странице</span>
+                </div>
+                <select class="browser-default custom-select" v-model.number="perPage" @change.prevent="setPage(1)">
+                    <option value="3">3</option>
+                    <option value="6">6</option>
+                    <option value="10">10</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <div class="input-group-append">
+                    <span class="input-group-text" id="basic-addon2">задачи</span>
+                </div>
+            </div>
+            
         </div>
         <div class="p-2">
             <div class="btn-group" role="group" aria-label="Basic example">
@@ -22,7 +31,11 @@
         </div>
         <div class="p-2">
             
-            Flex item 3
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-primary" @click="sort('name')"><i class="fas fa-sort"></i> name</button>
+                <button type="button" class="btn btn-primary" @click="sort('email')"><i class="fas fa-sort"></i> e-mail</button>
+                <button type="button" class="btn btn-primary" @click="sort('status')"><i class="fas fa-sort"></i> status</button>
+            </div>
         
         </div>
     </div>
@@ -55,7 +68,8 @@ var tasklist = new Vue({
       TaskData:{},TaskCount:0,
       User:{role:0},
       ErrData:{},
-      perPage:3,currentPage:1,searchStr:''
+      perPage:3,currentPage:1,
+      searchStr:'',currentSortDir:'asc',currentSort:'name'
     },
     created() {
         this.setPage(1);
@@ -81,7 +95,7 @@ var tasklist = new Vue({
             fetch('/task/get/?AJAX=1', {
                 mode: 'cors',
                 method: 'POST',
-                body: JSON.stringify({start:(p - 1)*this.perPage,limit:this.perPage})
+                body: JSON.stringify({start:(p - 1)*this.perPage,limit:this.perPage,data:this.currentSort,dir:this.currentSortDir})
             })
             .then(res => res.json())
             .then(res => {
@@ -94,7 +108,15 @@ var tasklist = new Vue({
                 this.TaskCount=res.count;
 
             });
-        }
+        },
+        sort(s) {
+            if(s === this.currentSort) {
+                this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+            }
+            this.currentSort = s;
+            this.setPage(this.currentPage);
+//            console.log(this.currentSortDir,this.currentSort);
+        },
     }
 });
 </script>
